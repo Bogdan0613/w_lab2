@@ -72,12 +72,42 @@ const counter_node* counter_find(const char* name)
 
 unsigned int& get_count(const char* name)
 {
-    counter_node* new_node = new counter_node;
-    new_node->name = new char[strlen(name)+1];
-    strcpy(new_node->name, name);
-    new_node->count = 0;
-    new_node->next = counter_head;
-    counter_head = new_node;
-    return new_node->count;
+counter_node* curr = counter_head;
+while(curr != nullptr){
+    if(strcmp(name, curr->name) == 0){
+        return curr->count;
+    }
+    curr = curr->next;
 }
 
+    counter_node* new_node = new counter_node;
+    new_node->count = 0;
+    int name_length = strlen(name);
+    new_node->name = new char[name_length + 1]; // + 1 for '\0'
+    strcpy(new_node->name, name);
+
+    if(strcmp(name, counter_head->name) < 0 || counter_head == nullptr) {
+        new_node->next = counter_head;
+        counter_head = new_node;
+
+    }else {
+        counter_node* temp = counter_head;
+        counter_node* prev = counter_head;
+
+        while (temp != nullptr) {
+            if (strcmp(name, temp->name) < 0) {
+                prev->next = new_node;
+                new_node->next = temp;
+                break;
+            }
+            if(temp->next == nullptr){
+                temp->next = new_node;
+                new_node->next = nullptr;
+                break;
+            }
+            prev = temp;
+            temp = temp->next;
+        }
+    }
+    return new_node->count;
+}
